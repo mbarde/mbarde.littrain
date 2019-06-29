@@ -1,0 +1,4 @@
+graft src/mbarde
+graft docs
+include *.rst
+global-exclude *.pyc

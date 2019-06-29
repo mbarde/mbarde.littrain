@@ -1,0 +1,6 @@
+[report]
+include =
+    src/mbarde/*
+omit =
+    */test*
+    */upgrades/*
