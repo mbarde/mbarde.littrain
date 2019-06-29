@@ -3,8 +3,8 @@ import spacy
 
 
 class LemmaContainer:
-    ''' Stores lemma and how often it occured in a book
-        (and in which chapters) '''
+    """ Stores lemma and how often it occured in a book
+        (and in which chapters) """
 
     def __init__(self, lemma, count=1, inChapters=[]):
         self.lemma = lemma
@@ -24,7 +24,7 @@ class LemmaContainer:
 
 
 class LemmaCollector:
-    ''' Can be used to collect lemmas of a book '''
+    """ Can be used to collect lemmas of a book """
 
     def __init__(self):
         self.naturalLanguageProcessor = spacy.load('en_core_web_sm')
@@ -35,8 +35,8 @@ class LemmaCollector:
 
         for token in tokens:
             if token.is_stop is False \
-             and token.is_punct is False \
-             and token.pos_ != 'NUM':
+               and token.is_punct is False \
+               and token.pos_ != 'NUM':
                 lemma = token.lemma_
                 if lemma in self.lemmas:
                     self.lemmas[lemma].alsoOccuredInChapter(chapterTitle)

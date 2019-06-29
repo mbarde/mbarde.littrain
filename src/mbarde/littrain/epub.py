@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
+
+import logging
 import zipfile
 
 
-class EpubReader:
+class EPubReader:
 
-    def __init__(self, filename):
-        self.filename = filename
-        self.zipFile = zipfile.ZipFile(self.filename)
+    def __init__(self, file):
+        self.file = file
+        self.zipFile = zipfile.ZipFile(self.file.open())
 
     def getChapters(self):
         contents = self.zipFile.namelist()
@@ -19,7 +21,7 @@ class EpubReader:
                 break
 
         if tocFileName is False:
-            print('No TOC found')
+            logging.error('[ePub reader] No TOC found')
             return []
 
         tocFile = self.zipFile.open(tocFileName)
@@ -47,7 +49,7 @@ class EpubReader:
 
             chapters.append({
                 'title': title,
-                'content': content
+                'content': content,
             })
 
         return chapters

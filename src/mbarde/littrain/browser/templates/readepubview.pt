@@ -15,7 +15,12 @@
 
         <h1 class="documentFirstHeading" tal:content="context/title" />
 
-        <h2>Hello ePub!</h2>
+        <h2>Chapters</h2>
+
+        <ul>
+          <li tal:repeat="chapter view/getChapters"
+              tal:content="chapter/title"/>
+        </ul>
 
         <div tal:replace="structure provider:plone.belowcontenttitle" />
 
