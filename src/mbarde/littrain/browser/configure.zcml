@@ -18,4 +18,12 @@
       directory="static"
       />
 
+  <browser:page
+      name="read-epub"
+      for="plone.app.contenttypes.interfaces.IFile"
+      class=".views.ReadEPubView"
+      template="templates/readepubview.pt"
+      permission="zope2.View"
+      />
+
 </configure>

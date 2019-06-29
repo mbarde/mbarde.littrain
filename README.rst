@@ -21,20 +21,6 @@ This add-on can be seen in action at the following sites:
 - Is there a page on the internet where everybody can see the features?
 
 
-Documentation
--------------
-
-Full documentation for end users can be found in the "docs" folder, and is also available online at http://docs.plone.org/foo/bar
-
-
-Translations
-------------
-
-This product has been translated into
-
-- Klingon (thanks, K'Plai)
-
-
 Installation
 ------------
 
@@ -50,13 +36,20 @@ Install mbarde.littrain by adding it to your buildout::
 
 and then running ``bin/buildout``
 
+Install language model for spacy:
+
+```
+pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.1.0/en_core_web_sm-2.1.0.tar.gz
+```
+
+(see https://spacy.io/usage/models#download-pip)
+
 
 Contribute
 ----------
 
 - Issue Tracker: https://github.com/collective/mbarde.littrain/issues
 - Source Code: https://github.com/collective/mbarde.littrain
-- Documentation: https://docs.plone.org/foo/bar
 
 
 Support
