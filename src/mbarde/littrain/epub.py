@@ -29,11 +29,10 @@ class EPubReader:
         tocXML = etree.fromstring(tocContent)
 
         chaptersXML = tocXML.xpath(
-            '//x:navPoint[@class="chapter"]',
+            '//x:navPoint',
             namespaces={'x': 'http://www.daisy.org/z3986/2005/ncx/'})
 
         chapters = []
-
         for chapterXML in chaptersXML:
             titleXML = chapterXML.find('{http://www.daisy.org/z3986/2005/ncx/}navLabel')
             title = titleXML.find('{http://www.daisy.org/z3986/2005/ncx/}text').text
