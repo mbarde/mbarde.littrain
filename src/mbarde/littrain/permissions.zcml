@@ -7,6 +7,12 @@
   <!-- -*- extra stuff goes here -*- -->
 
     <permission
+        id="mbarde.littrain.AddBook"
+        title="mbarde.littrain: Add Book"
+    />
+
+
+    <permission
         id="mbarde.littrain.AddLemma"
         title="mbarde.littrain: Add Lemma"
     />
