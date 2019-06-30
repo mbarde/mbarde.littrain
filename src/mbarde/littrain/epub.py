@@ -6,6 +6,7 @@ import zipfile
 
 
 class EPubReader:
+    """ Open ePub (version 2 & 3) files and read contents """
 
     def __init__(self, file):
         self.file = file

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from mbarde.littrain.lemma import LemmaCollector
+from mbarde.littrain.lemma import LemmaStorer
 from mbarde.littrain.testing import MBARDE_LITTRAIN_INTEGRATION_TESTING  # noqa: E501
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 
 import unittest
 
@@ -12,6 +15,7 @@ class LemmaUnitTest(unittest.TestCase):
     def setUp(self):
         """Custom shared utility setup for tests."""
         self.portal = self.layer['portal']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_lemma_collector(self):
         chapters = [
@@ -24,6 +28,7 @@ class LemmaUnitTest(unittest.TestCase):
                 'content': u"Hey, are you tired of real doors, cluttering up your house, where you open 'em, and they actually go somewhere? [music starts] And you go in another room?",  # noqa: E501
             },
         ]
+
         lemmaCollector = LemmaCollector()
         self.assertEqual(len(lemmaCollector.lemmas), 0)
 
@@ -34,3 +39,27 @@ class LemmaUnitTest(unittest.TestCase):
         chapter = chapters[1]
         lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
         self.assertEqual(len(lemmaCollector.lemmas), 27)
+
+        storer = LemmaStorer('Rickle Pick')
+        lemmaCollector.storeLemmas(storer)
+
+        self.assertEqual(self.portal.books.portal_type, 'Folder')
+        self.assertEqual(len(self.portal.books.listFolderContents()), 1)
+
+        book = self.portal.books.listFolderContents()[0]
+        self.assertEqual(book.portal_type, 'Book')
+        self.assertEqual(book.id, 'rickle-pick')
+        self.assertEqual(book.title, 'Rickle Pick')
+
+        self.assertEqual(len(book.listFolderContents()), len(chapters))
+        chapter = book.listFolderContents()[1]
+        self.assertEqual(chapter.portal_type, 'Chapter')
+        self.assertEqual(chapter.id, 'rixty-minutes')
+        self.assertEqual(chapter.title, chapters[1]['title'])
+
+        self.assertEqual(len(chapter.listFolderContents()), 12)
+        lemma = chapter.listFolderContents()[0]
+        self.assertEqual(lemma.lemma, u'tired')
+        self.assertEqual(lemma.count, 1)
+        self.assertEqual(len(lemma.chapters), 1)
+        self.assertEqual(lemma.chapters[0].to_object, chapter)
