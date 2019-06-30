@@ -7,6 +7,12 @@
   <!-- -*- extra stuff goes here -*- -->
 
     <permission
+        id="mbarde.littrain.AddChapter"
+        title="mbarde.littrain: Add Chapter"
+    />
+
+
+    <permission
         id="mbarde.littrain.AddBook"
         title="mbarde.littrain: Add Book"
     />

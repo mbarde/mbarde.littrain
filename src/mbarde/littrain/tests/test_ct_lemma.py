@@ -19,6 +19,14 @@ class LemmaIntegrationTest(unittest.TestCase):
         """Custom shared utility setup for tests."""
         self.portal = self.layer['portal']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        portal_types = self.portal.portal_types
+        parent_id = portal_types.constructContent(
+            'Chapter',
+            self.portal,
+            'chapter',
+            title='Parent container',
+        )
+        self.parent = self.portal[parent_id]
 
     def test_ct_lemma_schema(self):
         fti = queryUtility(IDexterityFTI, name='Lemma')
@@ -44,7 +52,7 @@ class LemmaIntegrationTest(unittest.TestCase):
     def test_ct_lemma_adding(self):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
         obj = api.content.create(
-            container=self.portal,
+            container=self.parent,
             type='Lemma',
             id='lemma',
         )
@@ -57,14 +65,14 @@ class LemmaIntegrationTest(unittest.TestCase):
         )
 
         # check that deleting the object works too
-        self.assertIn('lemma', self.portal.objectIds())
+        self.assertIn('lemma', self.parent.objectIds())
         api.content.delete(obj=obj)
-        self.assertNotIn('lemma', self.portal.objectIds())
+        self.assertNotIn('lemma', self.parent.objectIds())
 
-    def test_ct_lemma_globally_addable(self):
+    def test_ct_lemma_globally_not_addable(self):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
         fti = queryUtility(IDexterityFTI, name='Lemma')
-        self.assertTrue(
+        self.assertFalse(
             fti.global_allow,
-            u'{0} is not globally addable!'.format(fti.id),
+            u'{0} is globally addable!'.format(fti.id),
         )
