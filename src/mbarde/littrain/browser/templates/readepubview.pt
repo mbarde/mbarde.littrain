@@ -22,6 +22,8 @@
               tal:content="chapter/title"/>
         </ul>
 
+        <h3 tal:define="hhh view/getLemmas"/>
+
         <div tal:replace="structure provider:plone.belowcontenttitle" />
 
         <div tal:replace="structure provider:plone.abovecontentbody" />
