@@ -38,7 +38,10 @@ class LemmaUnitTest(unittest.TestCase):
 
         chapter = chapters[1]
         lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
-        self.assertEqual(len(lemmaCollector.lemmas), 27)
+        self.assertEqual(len(lemmaCollector.lemmas), 26)
+
+        self.assertEqual(len(lemmaCollector.getLemmasWithMaxOccurence()), 23)
+        self.assertEqual(len(lemmaCollector.getLemmasWithMaxOccurence(10)), 26)
 
         storer = LemmaStorer('Rickle Pick')
         lemmaCollector.storeLemmas(storer)
@@ -57,9 +60,25 @@ class LemmaUnitTest(unittest.TestCase):
         self.assertEqual(chapter.id, 'rixty-minutes')
         self.assertEqual(chapter.title, chapters[1]['title'])
 
-        self.assertEqual(len(chapter.listFolderContents()), 12)
+        self.assertEqual(len(chapter.listFolderContents()), 11)
         lemma = chapter.listFolderContents()[0]
         self.assertEqual(lemma.lemma, u'tired')
         self.assertEqual(lemma.count, 1)
         self.assertEqual(len(lemma.chapters), 1)
         self.assertEqual(lemma.chapters[0].to_object, chapter)
+
+        chapter0 = book.listFolderContents()[0]
+        chapter1 = book.listFolderContents()[1]
+        self.assertEqual(len(chapter0.listFolderContents()) +
+                         len(chapter1.listFolderContents()), 26)
+
+        storer = LemmaStorer('Rickle Pick - Occurence One')
+        lemmaCollector.storeLemmas(storer, maxOccurence=1)
+        book = self.portal.books.listFolderContents()[1]
+        self.assertEqual(book.portal_type, 'Book')
+        self.assertEqual(book.id, 'rickle-pick-occurence-one')
+        self.assertEqual(book.title, 'Rickle Pick - Occurence One')
+        chapter0 = book.listFolderContents()[0]
+        chapter1 = book.listFolderContents()[1]
+        self.assertEqual(len(chapter0.listFolderContents()) +
+                         len(chapter1.listFolderContents()), 23)

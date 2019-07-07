@@ -4,6 +4,7 @@ from z3c.relationfield import RelationValue
 from zope import component
 from zope.intid.interfaces import IIntIds
 
+import logging
 import spacy
 
 
@@ -41,7 +42,8 @@ class LemmaCollector:
         for token in tokens:
             if token.is_stop is False \
                and token.is_punct is False \
-               and token.pos_ != 'NUM':
+               and token.pos_ != 'NUM' \
+               and token.is_alpha is True:
                 lemma = token.lemma_
                 if lemma in self.lemmas:
                     self.lemmas[lemma].alsoOccuredInChapter(chapterTitle)
@@ -55,9 +57,24 @@ class LemmaCollector:
                 results.append(self.lemmas[lemma])
         return results
 
-    def storeLemmas(self, storer):
-        for lemma in self.lemmas:
-            storer.storeLemma(self.lemmas[lemma])
+    def storeLemmas(self, storer, maxOccurence=None):
+        if maxOccurence is None:
+            lemmas = list(self.lemmas.values())
+        else:
+            lemmas = self.getLemmasWithMaxOccurence(maxOccurence)
+
+        c = 0
+        maxC = len(lemmas)
+        reportSteps = 20
+        for lemma in lemmas:
+            storer.storeLemma(lemma)
+            c += 1
+            if c % reportSteps == 0:  # noqa: S001
+                logging.info('Stored {0}% of all lemmas.'.format(
+                    str(int(float(c) / float(maxC) * 100))))
+
+    def getLemmasCount(self):
+        return len(self.lemmas)
 
 
 class LemmaStorer:
@@ -80,6 +97,9 @@ class LemmaStorer:
     chapters = {}
 
     def __init__(self, bookTitle):
+        self.bookContainer = None
+        self.book = None
+        self.chapters = {}
         self.bookContainer = self.getBookContainer()
         self.book = self.getBook(bookTitle)
 
