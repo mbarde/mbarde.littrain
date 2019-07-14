@@ -36,10 +36,9 @@ class ReadEPubView(BrowserView):
 
         c = 0
         for chapter in ePubReader.getChapters():
-            if c > 7:
-                logging.info('Updating lemmas by chapter {0} ({1}) ...'.format(
-                    chapter['title'], str(c)))
-                lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
+            logging.info('Updating lemmas by chapter {0} ({1}) ...'.format(
+                chapter['title'], str(c)))
+            lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
             c += 1
 
         storer = LemmaStorer(self.context.title)
