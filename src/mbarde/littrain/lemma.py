@@ -12,10 +12,11 @@ class LemmaContainer:
     """ Stores lemma and how often it occured in a book
         (and in which chapters) """
 
-    def __init__(self, lemma, count=1, inChapters=[]):
+    def __init__(self, lemma, count=1, inChapters=[], partOfSpeech=''):
         self.lemma = lemma
         self.count = count
         self.inChapters = inChapters
+        self.partOfSpeech = partOfSpeech
 
     def alsoOccuredInChapter(self, chapterTitle):
         self.count += 1
@@ -23,8 +24,9 @@ class LemmaContainer:
             self.inChapters.append(chapterTitle)
 
     def prettyPrint(self):
-        return '{0} ({1}x)\n{2}'.format(
+        return '{0} [{1}] ({2}x)\n{3}'.format(
             self.lemma.encode('utf-8'),
+            self.partOfSpeech,
             str(self.count),
             str(self.inChapters))
 
@@ -48,7 +50,8 @@ class LemmaCollector:
                 if lemma in self.lemmas:
                     self.lemmas[lemma].alsoOccuredInChapter(chapterTitle)
                 else:
-                    self.lemmas[lemma] = LemmaContainer(lemma, 1, [chapterTitle])
+                    self.lemmas[lemma] = LemmaContainer(
+                        lemma, 1, [chapterTitle], token.pos_)
 
     def getLemmasWithMaxOccurence(self, maxOccurence=1):
         results = []
@@ -120,6 +123,7 @@ class LemmaStorer:
                 'lemma': lemma.lemma,
                 'count': lemma.count,
                 'chapters': inChaptersRVs,
+                'partOfSpeech': lemma.partOfSpeech,
             }
             api.content.create(
                 type='Lemma',

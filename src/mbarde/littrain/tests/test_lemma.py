@@ -82,3 +82,9 @@ class LemmaUnitTest(unittest.TestCase):
         chapter1 = book.listFolderContents()[1]
         self.assertEqual(len(chapter0.listFolderContents()) +
                          len(chapter1.listFolderContents()), 23)
+
+        for lemma in chapter0.listFolderContents():
+            lemma.updateDefinitions()
+
+        for lemma in chapter1.listFolderContents():
+            lemma.updateDefinitions()
