@@ -6,19 +6,13 @@
 mbarde.littrain
 ===============
 
-Tell me what your product does
-
-Features
+Usage
 --------
 
-- Can be bullet points
+- Install Addon
+- Upload EPub
+- Call view `read-epub` on EPub file
 
-
-Examples
---------
-
-This add-on can be seen in action at the following sites:
-- Is there a page on the internet where everybody can see the features?
 
 
 Installation

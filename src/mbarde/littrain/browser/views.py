@@ -35,9 +35,12 @@ class ReadEPubView(BrowserView):
                 chapter['title'], str(c)))
             lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
             c += 1
+            if c > 0:
+                break
 
         storer = LemmaStorer(self.context.title)
         logging.info('Storing {0} lemmas ...'.format(str(lemmaCollector.getLemmasCount())))
-        lemmaCollector.storeLemmas(storer, maxOccurence=self.difficulty)
+        lemmaCollector.storeLemmas(
+            storer, maxOccurence=self.difficulty, updateDefinitions=False)
 
         logging.info('Done storing {0} lemmas.'.format(str(lemmaCollector.getLemmasCount())))

@@ -60,7 +60,7 @@ class LemmaCollector:
                 results.append(self.lemmas[lemma])
         return results
 
-    def storeLemmas(self, storer, maxOccurence=None):
+    def storeLemmas(self, storer, maxOccurence=None, updateDefinitions=False):
         if maxOccurence is None:
             lemmas = list(self.lemmas.values())
         else:
@@ -70,7 +70,7 @@ class LemmaCollector:
         maxC = len(lemmas)
         reportSteps = 20
         for lemma in lemmas:
-            storer.storeLemma(lemma)
+            storer.storeLemma(lemma, updateDefinitions)
             c += 1
             if c % reportSteps == 0:  # noqa: S001
                 logging.info('Stored {0}% of all lemmas.'.format(
@@ -106,7 +106,7 @@ class LemmaStorer:
         self.bookContainer = self.getBookContainer()
         self.book = self.getBook(bookTitle)
 
-    def storeLemma(self, lemma):
+    def storeLemma(self, lemma, updateDefinitions=False):
         # convert list of chapter titles into list of
         # RelationValue's pointing to chapter objects
         intids = component.getUtility(IIntIds)
@@ -125,12 +125,14 @@ class LemmaStorer:
                 'chapters': inChaptersRVs,
                 'partOfSpeech': lemma.partOfSpeech,
             }
-            api.content.create(
+            obj = api.content.create(
                 type='Lemma',
                 title=lemma.lemma,
                 container=chapterObj,
                 **data  # noqa: C815
             )
+            if updateDefinitions:
+                obj.updateDefinitions()
 
     def getBookContainer(self):
         if self.bookContainer is not None:
