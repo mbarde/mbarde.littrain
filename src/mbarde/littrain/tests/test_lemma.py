@@ -68,6 +68,11 @@ class LemmaUnitTest(unittest.TestCase):
         self.assertEqual(lemma.chapters[0].to_object, chapter)
         self.assertEqual(lemma.partOfSpeech, 'ADJ')
 
+        lemma.updateDefinitions()
+        self.assertTrue('In need of some rest' in lemma.definitions[0])
+        self.assertTrue('fatigued' in lemma.relatedWords[0]['words'][0])
+        self.assertTrue('tired of this' in lemma.examples[0])
+
         chapter0 = book.listFolderContents()[0]
         chapter1 = book.listFolderContents()[1]
         self.assertEqual(len(chapter0.listFolderContents()) +
