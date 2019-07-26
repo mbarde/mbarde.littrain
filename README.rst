@@ -24,7 +24,7 @@ This add-on can be seen in action at the following sites:
 Installation
 ------------
 
-Install mbarde.littrain by adding it to your buildout::
+Install mbarde.littrain by adding it to your buildout:
 
     [buildout]
 
@@ -52,12 +52,16 @@ Contribute
 - Source Code: https://github.com/collective/mbarde.littrain
 
 
-Support
--------
+Development
+----------
 
-If you are having issues, please let us know.
-We have a mailing list located at: project@example.com
-
+```
+virtualenv --clear -p python3.6 venv
+source venv/bin/activate
+pip install -r requirements.txt
+buildout bootstrap
+bin/buildout -n -c buildout.cfg code-analysis:return-status-codes=True code-analysis:flake8-max-line-length=100
+```
 
 License
 -------

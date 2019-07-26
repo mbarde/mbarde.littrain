@@ -5,11 +5,6 @@ from mbarde.littrain.lemma import LemmaStorer
 from Products.Five.browser import BrowserView
 
 import logging
-import sys
-
-
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 
 class ReadEPubView(BrowserView):

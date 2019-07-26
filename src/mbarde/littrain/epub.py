@@ -45,7 +45,7 @@ class EPubReader:
 
             parser = etree.HTMLParser(encoding='utf-8')
             contentHTML = etree.fromstring(content, parser=parser)
-            content = ''.join(contentHTML.itertext()).decode('utf-8')
+            content = ''.join(contentHTML.itertext())
 
             chapters.append({
                 'title': title,

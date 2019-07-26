@@ -62,7 +62,7 @@ class LemmaUnitTest(unittest.TestCase):
 
         self.assertEqual(len(chapter.listFolderContents()), 11)
         lemma = chapter.listFolderContents()[0]
-        self.assertEqual(lemma.lemma, u'tired')
+        self.assertEqual(lemma.lemma, u'hey')
         self.assertEqual(lemma.count, 1)
         self.assertEqual(len(lemma.chapters), 1)
         self.assertEqual(lemma.chapters[0].to_object, chapter)

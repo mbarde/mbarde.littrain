@@ -33,6 +33,11 @@ class ILemma(model.Schema):
         required=True,
     )
 
+    partOfSpeech = schema.Text(
+        title=_(u'Part of speech tag'),
+        required=True,
+    )
+
 
 @implementer(ILemma)
 class Lemma(Item):
