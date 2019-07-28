@@ -10,9 +10,10 @@ class EPubReader:
 
     def __init__(self, file):
         self.file = file
-        self.zipFile = zipfile.ZipFile(self.file.open())
 
     def getChapters(self):
+        openedFile = self.file.open()
+        self.zipFile = zipfile.ZipFile(openedFile)
         contents = self.zipFile.namelist()
 
         tocFileName = False
@@ -52,4 +53,5 @@ class EPubReader:
                 'content': content,
             })
 
+        openedFile.close()
         return chapters
