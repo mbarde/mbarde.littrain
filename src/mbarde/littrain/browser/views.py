@@ -12,7 +12,7 @@ class ReadEPubView(BrowserView):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        self.difficulty = 4  # the higher the easier
+        self.difficulty = 1  # the higher the easier
 
     def getChapters(self):
         if self.context.portal_type != 'File':
@@ -35,12 +35,10 @@ class ReadEPubView(BrowserView):
                 chapter['title'], str(c)))
             lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
             c += 1
-            if c > 0:
-                break
 
         storer = LemmaStorer(self.context.title)
         logging.info('Storing {0} lemmas ...'.format(str(lemmaCollector.getLemmasCount())))
         lemmaCollector.storeLemmas(
-            storer, maxOccurence=self.difficulty, updateDefinitions=False)
+            storer, maxOccurence=self.difficulty, updateDefinitions=True)
 
         logging.info('Done storing {0} lemmas.'.format(str(lemmaCollector.getLemmasCount())))

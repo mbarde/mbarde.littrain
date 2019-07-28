@@ -68,8 +68,6 @@ class Lemma(Item):
 
         parser = WiktionaryParser()
         word = parser.fetch(self.lemma, 'english')
-        parser.set_default_language('english')
-        parser.include_part_of_speech(self.partOfSpeech)
 
         # merge definition lists of all etymologies
         definitions = []
