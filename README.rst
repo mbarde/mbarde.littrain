@@ -38,6 +38,27 @@ pip install https://github.com/explosion/spacy-models/releases/download/en_core_
 
 (see https://spacy.io/usage/models#download-pip)
 
+Set up API
+------------
+
+Install `plone.retapi`
+
+To fix CORS add following to buildout configuration (see https://github.com/plone/volto/blob/master/api/base.cfg#L24):
+
+```
+zcml-additional =
+    <configure xmlns="http://namespaces.zope.org/zope"
+               xmlns:plone="http://namespaces.plone.org/plone">
+    <plone:CORSPolicy
+      allow_origin="http://localhost:8081,http://127.0.0.1:8081"
+      allow_methods="DELETE,GET,OPTIONS,PATCH,POST,PUT"
+      allow_credentials="true"
+      expose_headers="Content-Length,X-My-Header"
+      allow_headers="Accept,Authorization,Content-Type,X-Custom-Header,Origin"
+      max_age="3600"
+      />
+    </configure>
+```
 
 Contribute
 ----------
