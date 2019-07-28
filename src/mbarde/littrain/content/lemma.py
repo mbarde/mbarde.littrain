@@ -2,12 +2,15 @@
 from mbarde.littrain import _
 from plone.app.vocabularies.catalog import CatalogSource
 from plone.dexterity.content import Item
+from plone.schema.jsonfield import JSONField
 from plone.supermodel import model
 from wiktionaryparser import WiktionaryParser
 from z3c.relationfield import RelationChoice
 from z3c.relationfield import RelationList
 from zope import schema
 from zope.interface import implementer
+
+import json
 
 
 class ILemma(model.Schema):
@@ -39,21 +42,18 @@ class ILemma(model.Schema):
         required=True,
     )
 
-    definitions = schema.List(
+    definitions = JSONField(
         title=_(u'Definitions'),
-        default=[],
         required=False,
     )
 
-    relatedWords = schema.List(
+    relatedWords = JSONField(
         title=_(u'Related words'),
-        default=[],
         required=False,
     )
 
-    examples = schema.List(
+    examples = JSONField(
         title=_(u'Examples'),
-        default=[],
         required=False,
     )
 
@@ -80,14 +80,25 @@ class Lemma(Item):
         if len(definitions) == 0:
             return
 
+        # if Wiktionary does offer only one definition,
+        # we use this without further checks
+        if len(definitions) == 1:
+            self.storeWiktionaryDefinition(definitions[0])
+            return
+
+        # otherwise try to find correct definition
+        # based on part of speech
         posWik = self.getPartOfSpeechWiktionaryStyle()
         for definition in definitions:
             pos = definition.get('partOfSpeech', '')
             if pos.lower() == posWik:
-                self.definitions = definition['text'][1:]
-                self.relatedWords = definition['relatedWords']
-                self.examples = definition['examples']
+                self.storeWiktionaryDefinition(definition)
                 return
+
+    def storeWiktionaryDefinition(self, wikDef):
+        self.definitions = json.dumps(wikDef['text'][1:])
+        self.relatedWords = json.dumps(wikDef['relatedWords'])
+        self.examples = json.dumps(wikDef['examples'])
 
     # https://spacy.io/api/annotation#pos-en
     # to
