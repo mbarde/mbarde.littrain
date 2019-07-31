@@ -1,16 +1,9 @@
-.. This README is meant for consumption by humans and pypi. Pypi can render rst files so please do not use Sphinx features.
-   If you want to learn more about writing documentation, please check out: http://docs.plone.org/about/documentation_styleguide.html
-   This text does not appear on pypi or github. It is a comment.
+# mbarde.littrain
 
-===============
-mbarde.littrain
-===============
+## Usage
 
-Usage
---------
-
-- Install Addon
-- Upload EPub
+### Learn new books:
+- Upload EPub file
 - Call view `read-epub` on EPub file
 
 
@@ -18,7 +11,7 @@ Usage
 Installation
 ------------
 
-Install mbarde.littrain by adding it to your buildout:
+Install `mbarde.littrain` by adding it to your buildout:
 
     [buildout]
 
