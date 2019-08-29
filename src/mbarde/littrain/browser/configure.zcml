@@ -26,4 +26,11 @@
       permission="zope2.View"
       />
 
+  <browser:page
+     name="littrain-controlpanel"
+     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+     class=".controlpanel.LitTrainControlPanelView"
+     permission="cmf.ManagePortal"
+     />
+
 </configure>

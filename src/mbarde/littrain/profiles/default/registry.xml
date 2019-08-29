@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <registry>
-<!-- -*- extra stuff goes here -*- -->
-
+  <records
+    interface="mbarde.littrain.browser.controlpanel.ILitTrainControlPanelView"
+    prefix="littrain" />
 </registry>
