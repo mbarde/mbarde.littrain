@@ -8,6 +8,8 @@ from z3c.form import button
 from zope import schema
 from zope.interface import Interface
 
+import logging
+
 
 class ILitTrainControlPanelView(Interface):
 
@@ -30,6 +32,24 @@ class LitTrainControlPanelForm(RegistryEditForm):
             message=_(u'There are ${successCount} lemmas',
                       mapping={u'successCount': len(brains)}),
             request=self.request, type='info')
+
+    @button.buttonAndHandler(_(u'Update all lemmas'))
+    def handleUpdateAll(self, action):
+        brains = api.content.find(portal_type='Lemma')
+        brainCount = len(brains)
+        logging.info(u'Found {0} lemmas to update ...'.format(str(brainCount)))
+
+        counter = 0
+        reportInterval = 50
+        for brain in brains:
+            lemma = brain.getObject()
+            lemma.updateDefinitions()
+            counter += 1
+            if counter % reportInterval == 0:  # noqa: S001
+                percentage = int(float(counter) / float(brainCount) * 100)
+                logging.info(u'Updated {0}% of all lemmas'.format(percentage))
+
+        logging.info(u'Successfully updated {0} lemmas'.format(str(counter)))
 
     @button.buttonAndHandler(_(u'Save'), name='save')
     def handleSave(self, action):
