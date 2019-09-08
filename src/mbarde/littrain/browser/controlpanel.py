@@ -36,11 +36,11 @@ class LitTrainControlPanelForm(RegistryEditForm):
         errorMsg = False
         data, errors = self.extractData()
 
-        if 'soap_queries_folder' in data:
-            soapQueriesPath = data['soap_queries_folder']
+        if 'books_folder' in data:
+            booksPath = data['books_folder']
             portal = api.portal.get()
             try:
-                folder = portal.restrictedTraverse(str(soapQueriesPath))
+                folder = portal.restrictedTraverse(str(booksPath))
                 if folder.portal_type != 'Folder':
                     errorMsg = _(u'Item at this location is not a folder!')
             except KeyError:
