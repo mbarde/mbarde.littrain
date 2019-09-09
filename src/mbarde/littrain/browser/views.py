@@ -22,7 +22,16 @@ class ReadEPubView(BrowserView):
         self.ePubReader = EPubReader(self.context.file)
         return self.ePubReader.getChapters()
 
-    def getLemmas(self):
+    def __call__(self):
+        chaptersToRead = self.request.form.get('chapter', False)
+        if chaptersToRead is not False:
+            if not isinstance(chaptersToRead, list):
+                chaptersToRead = [chaptersToRead]
+            updateDefinitions = self.request.form.get('updateDefinitions', False)
+            self.readAndStoreLemmasFromChapters(chaptersToRead, updateDefinitions)
+        return super(ReadEPubView, self).__call__()
+
+    def readAndStoreLemmasFromChapters(self, chaptersToRead, updateDefinitions=True):
         if self.context.portal_type != 'File':
             return []
 
@@ -33,15 +42,16 @@ class ReadEPubView(BrowserView):
 
         c = 0
         for chapter in ePubReader.getChapters():
-            logging.info('Updating lemmas by chapter {0} ({1}) ...'.format(
-                chapter['title'], str(c)))
-            lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
+            if chapter['id'] in chaptersToRead:
+                logging.info('Updating lemmas by chapter {0} ({1}) ...'.format(
+                    chapter['title'], str(c)))
+                lemmaCollector.updateLemmasByChapter(chapter['content'], chapter['title'])
             c += 1
 
         storer = LemmaStorer(self.context.title)
         logging.info('Storing {0} lemmas ...'.format(str(lemmaCollector.getLemmasCount())))
         lemmaCollector.storeLemmas(
-            storer, maxOccurence=self.difficulty, updateDefinitions=True)
+            storer, maxOccurence=self.difficulty, updateDefinitions=updateDefinitions)
 
         logging.info('Done storing {0} lemmas.'.format(str(lemmaCollector.getLemmasCount())))
 

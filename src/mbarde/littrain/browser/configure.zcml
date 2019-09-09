@@ -22,7 +22,7 @@
       name="read-epub"
       for="plone.app.contenttypes.interfaces.IFile"
       class=".views.ReadEPubView"
-      template="templates/readepubview.pt"
+      template="templates/read_epub_view.pt"
       permission="zope2.View"
       />
 

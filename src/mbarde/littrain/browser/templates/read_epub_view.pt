@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      tal:define="authenticator context/@@authenticator;
+                  authToken authenticator/token;"
+      i18n:domain="example.conference">
+<body>
+
+<metal:main fill-slot="main">
+    <tal:main-macro metal:define-macro="main"
+        tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime">
+
+        <div tal:replace="structure provider:plone.abovecontenttitle" />
+
+        <h1 class="documentFirstHeading" tal:content="context/title" />
+
+        <h2>Chapters</h2>
+
+        <form tal:attributes="action python: context.absolute_url() + '/read-epub?_authenticator=' + authToken"
+              method="POST">
+          <ul>
+            <tal:chapter tal:repeat="chapter view/getChapters">
+              <li tal:define="cbID python: 'chap-' + chapter['id']">
+                <input type="checkbox" name="chapter"
+                       tal:attributes="id cbID;
+                                       value chapter/id"/>
+                <label tal:attributes="for cbID"
+                       tal:content="chapter/title"/>
+              </li>
+            </tal:chapter>
+          </ul>
+          <input type="checkbox" id="updateDefinitions"
+                 name="updateDefinitions" value="True"/>
+          <label for="updateDefinitions">Update definitions</label>
+          <br/>
+          <button type="submit" class="standalone">Read</button>
+        </form>
+
+        <div tal:replace="structure provider:plone.belowcontenttitle" />
+
+        <div tal:replace="structure provider:plone.abovecontentbody" />
+
+        <div tal:replace="structure provider:plone.belowcontentbody" />
+
+    </tal:main-macro>
+</metal:main>
+
+</body>
+</html>

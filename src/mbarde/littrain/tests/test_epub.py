@@ -2,7 +2,9 @@
 # from mbarde.littrain.epub import EPubReader
 from mbarde.littrain.epub import EPubReader
 from mbarde.littrain.testing import MBARDE_LITTRAIN_INTEGRATION_TESTING  # noqa: E501
-
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.i18n.normalizer import idnormalizer
 import os.path
 import unittest
 
@@ -25,9 +27,27 @@ class EPubUnitTest(unittest.TestCase):
     def setUp(self):
         """Custom shared utility setup for tests."""
         self.portal = self.layer['portal']
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_read(self):
         ePubReader = EPubReader(dummy_epub())
         chapters = ePubReader.getChapters()
         self.assertEqual(len(chapters), 12)
         self.assertEqual(chapters[0]['title'], u'I. Down the Rabbit-Hole')
+
+        title = chapters[0]['title']
+        id = idnormalizer.normalize(title)
+        self.assertEqual(chapters[0]['id'], id)
+
+    def test_read_epub_view(self):
+        self.portal.invokeFactory('File', 'file')
+        file = self.portal['file']
+        file.title = 'Alice\'s Adventures in Wonderland'
+        file.file = dummy_epub()
+
+        # test read view:
+        path = '/'.join(file.getPhysicalPath() + ('read-epub',))
+        view = self.portal.restrictedTraverse(path)
+        self.assertTrue(view)
+        viewHTML = view()
+        self.assertTrue(u'I. Down the Rabbit-Hole' in viewHTML)

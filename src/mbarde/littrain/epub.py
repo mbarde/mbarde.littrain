@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
+from plone.i18n.normalizer import idnormalizer
 
 import logging
 import zipfile
@@ -48,7 +49,9 @@ class EPubReader:
             contentHTML = etree.fromstring(content, parser=parser)
             content = ''.join(contentHTML.itertext())
 
+            id = idnormalizer.normalize(title)
             chapters.append({
+                'id': id,
                 'title': title,
                 'content': content,
             })
