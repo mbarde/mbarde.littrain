@@ -27,10 +27,18 @@
       />
 
   <browser:page
-     name="littrain-controlpanel"
-     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-     class=".controlpanel.LitTrainControlPanelView"
-     permission="cmf.ManagePortal"
-     />
+      name="littrain-controlpanel"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".controlpanel.LitTrainControlPanelView"
+      permission="cmf.ManagePortal"
+      />
+
+   <browser:page
+       name="view"
+       for="mbarde.littrain.content.lemma.ILemma"
+       class=".views.LemmaView"
+       template="templates/lemma_view.pt"
+       permission="zope2.View"
+       />
 
 </configure>

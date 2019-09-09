@@ -1,0 +1,60 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      tal:define="authenticator context/@@authenticator;
+                  authToken authenticator/token;"
+      i18n:domain="mbarde.littrain">
+<body>
+
+<metal:main fill-slot="main">
+    <tal:main-macro metal:define-macro="main">
+        <div tal:replace="structure provider:plone.abovecontenttitle" />
+        <div tal:replace="structure provider:plone.belowcontenttitle" />
+        <p class="documentDescription" tal:content="context/description" />
+        <div tal:replace="structure provider:plone.abovecontentbody" />
+
+        <h1 class="documentFirstHeading" tal:content="context/Title"/>
+
+        <div tal:repeat="widgetName view/widgets"
+             tal:condition="view/canUpdateFromView">
+          <tal:widget define="widget python: view.w.get(widgetName)">
+            <label tal:content="widget/label"/>
+            <div tal:content="structure widget/render" />
+          </tal:widget>
+        </div>
+        <br/>
+
+        <form tal:condition="view/canUpdateFromView"
+              tal:attributes="action python: context.absolute_url() + '?_authenticator=' + authToken"
+              method="POST">
+          <input type="hidden" id="update-definitions" name="update-definitions" value="1"/>
+          <button id="btn-update-definitions"
+                  type="submit" class="standalone">
+             <i class="fa fa-refresh"></i>
+             <span i18n:translate="">Update</span>
+          </button>
+          <span id="span-loading" style="display:none">
+            <span i18n:translate="">Loading</span> ...
+          </span>
+        </form>
+
+        <span>Last update:
+          <span tal:content="view/getModifiedLocalized"></span>
+        </span>
+
+        <script>
+          $(document).ready(function() {
+            $('#btn-update-definitions').click(function() {
+              $('#btn-update-definitions').addClass('disabled');
+              $('#span-loading').show();
+            });
+          })
+        </script>
+
+    </tal:main-macro>
+</metal:main>
+</body>
+</html>

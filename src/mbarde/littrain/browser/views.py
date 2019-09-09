@@ -2,6 +2,8 @@
 from mbarde.littrain.epub import EPubReader
 from mbarde.littrain.lemma import LemmaCollector
 from mbarde.littrain.lemma import LemmaStorer
+from plone import api
+from plone.dexterity.browser.view import DefaultView
 from Products.Five.browser import BrowserView
 
 import logging
@@ -42,3 +44,23 @@ class ReadEPubView(BrowserView):
             storer, maxOccurence=self.difficulty, updateDefinitions=True)
 
         logging.info('Done storing {0} lemmas.'.format(str(lemmaCollector.getLemmasCount())))
+
+
+class LemmaView(DefaultView):
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def __call__(self):
+        updateDefs = self.request.form.get('update-definitions', False)
+        if updateDefs and self.canUpdateFromView():
+            self.context.updateDefinitions()
+        return super(LemmaView, self).__call__()
+
+    def canUpdateFromView(self):
+        return api.user.get_permissions(obj=self.context) \
+            .get('Manage portal', False)
+
+    def getModifiedLocalized(self):
+        return api.portal.get_localized_time(self.context.modified(), long_format=True)

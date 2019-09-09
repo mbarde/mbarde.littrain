@@ -68,6 +68,13 @@ class LemmaUnitTest(unittest.TestCase):
         self.assertEqual(lemma.chapters[0].to_object, chapter)
         self.assertEqual(lemma.partOfSpeech, 'ADJ')
 
+        # test lemma view:
+        path = '/'.join(lemma.getPhysicalPath() + ('view',))
+        view = self.portal.restrictedTraverse(path)
+        self.assertTrue(view)
+        viewHTML = view()
+        self.assertTrue(u'tired' in viewHTML)
+
         lemma.updateDefinitions()
         self.assertTrue('In need of some rest' in lemma.definitions)
         self.assertTrue('fatigued' in lemma.relatedWords)
