@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone import api
+from plone.i18n.normalizer import idnormalizer
 from z3c.relationfield import RelationValue
 from zope import component
 from zope.intid.interfaces import IIntIds
@@ -153,11 +154,14 @@ class LemmaStorer:
         if self.book is not None:
             return self.book
 
-        book = api.content.create(
-            type='Book',
-            title=bookTitle,
-            container=self.bookContainer,
-        )
+        id = idnormalizer.normalize(bookTitle)
+        book = self.bookContainer.get(id, None)
+        if book is None:
+            book = api.content.create(
+                type='Book',
+                title=bookTitle,
+                container=self.bookContainer,
+            )
         return book
 
     def getChapter(self, chapterTitle):

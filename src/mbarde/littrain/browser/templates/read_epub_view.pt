@@ -36,7 +36,10 @@
                  name="updateDefinitions" value="True"/>
           <label for="updateDefinitions">Update definitions</label>
           <br/>
-          <button type="submit" class="standalone">Read</button>
+          <button id="btn-read" type="submit" class="standalone">Read</button>
+          <span id="span-loading" style="display:none">
+            <span i18n:translate="">Reading</span> ...
+          </span>
         </form>
 
         <div tal:replace="structure provider:plone.belowcontenttitle" />
@@ -44,6 +47,15 @@
         <div tal:replace="structure provider:plone.abovecontentbody" />
 
         <div tal:replace="structure provider:plone.belowcontentbody" />
+
+        <script>
+          $(document).ready(function() {
+            $('#btn-read').click(function() {
+              $('#btn-read').addClass('disabled');
+              $('#span-loading').show();
+            });
+          })
+        </script>
 
     </tal:main-macro>
 </metal:main>

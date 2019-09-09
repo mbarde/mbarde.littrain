@@ -2,9 +2,11 @@
 # from mbarde.littrain.epub import EPubReader
 from mbarde.littrain.epub import EPubReader
 from mbarde.littrain.testing import MBARDE_LITTRAIN_INTEGRATION_TESTING  # noqa: E501
+from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.i18n.normalizer import idnormalizer
+
 import os.path
 import unittest
 
@@ -40,10 +42,15 @@ class EPubUnitTest(unittest.TestCase):
         self.assertEqual(chapters[0]['id'], id)
 
     def test_read_epub_view(self):
-        self.portal.invokeFactory('File', 'file')
-        file = self.portal['file']
-        file.title = 'Alice\'s Adventures in Wonderland'
-        file.file = dummy_epub()
+        data = {
+            'file': dummy_epub(),
+        }
+        file = api.content.create(
+            type='File',
+            container=self.portal,
+            title=u"Alice's Adventures in Wonderland",
+            **data  # noqa: C815
+        )
 
         # test read view:
         path = '/'.join(file.getPhysicalPath() + ('read-epub',))
