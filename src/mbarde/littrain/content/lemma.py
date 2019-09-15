@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from mbarde.littrain import _
+from mbarde.littrain.wiktionary import adverbToAdjcetive
+from mbarde.littrain.wiktionary import getDefinitions
+from mbarde.littrain.wiktionary import getPartOfSpeechWiktionaryStyle
 from plone.app.vocabularies.catalog import CatalogSource
 from plone.dexterity.content import Item
 from plone.schema.jsonfield import JSONField
 from plone.supermodel import model
-from wiktionaryparser import WiktionaryParser
 from z3c.relationfield import RelationChoice
 from z3c.relationfield import RelationList
 from zope import schema
@@ -66,15 +68,16 @@ class Lemma(Item):
         self.relatedWords = []
         self.examples = []
 
-        parser = WiktionaryParser()
-        word = parser.fetch(self.lemma, 'english')
+        if self.partOfSpeech == 'ADV':
+            # convert adverb lemma to corresponding adjective,
+            # since adjectives usually have more detailed definitions
+            lemmaAdj = adverbToAdjcetive(self.lemma)
+            if lemmaAdj is not False:
+                self.lemma = lemmaAdj
+                self.partOfSpeech = 'ADJ'
 
-        # merge definition lists of all etymologies
-        definitions = []
-        for etymology in word:
-            defs = etymology.get('definitions', [])
-            definitions += defs
-        parser.session.close()
+        definitions = getDefinitions(self.lemma)
+
         if len(definitions) == 0:
             return
 
@@ -86,7 +89,7 @@ class Lemma(Item):
 
         # otherwise try to find correct definition
         # based on part of speech
-        posWik = self.getPartOfSpeechWiktionaryStyle()
+        posWik = getPartOfSpeechWiktionaryStyle(self.partOfSpeech)
         for definition in definitions:
             pos = definition.get('partOfSpeech', '')
             if pos.lower() == posWik:
@@ -97,17 +100,3 @@ class Lemma(Item):
         self.definitions = json.dumps(wikDef['text'][1:])
         self.relatedWords = json.dumps(wikDef['relatedWords'])
         self.examples = json.dumps(wikDef['examples'])
-
-    # https://spacy.io/api/annotation#pos-en
-    # to
-    # https://en.wiktionary.org/wiki/Wiktionary:Entry_layout#Part_of_speech
-    def getPartOfSpeechWiktionaryStyle(self):
-        mappings = {
-            'PROPN': 'noun',
-            'ADJ': 'adjective',
-            'NOUN': 'noun',
-            'VERB': 'verb',
-            'ADV': 'adverb',
-            'INTJ': 'interjection',
-        }
-        return mappings.get(self.partOfSpeech, self.partOfSpeech)

@@ -5,6 +5,7 @@ from mbarde.littrain.testing import MBARDE_LITTRAIN_INTEGRATION_TESTING  # noqa:
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 
+import json
 import unittest
 
 
@@ -84,6 +85,16 @@ class LemmaUnitTest(unittest.TestCase):
         chapter1 = book.listFolderContents()[1]
         self.assertEqual(len(chapter0.listFolderContents()) +
                          len(chapter1.listFolderContents()), 26)
+
+        # test adverb definitions
+        lemma = chapter0.listFolderContents()[1]
+        self.assertEqual(lemma.lemma, 'hesitantly')
+        self.assertEqual(lemma.partOfSpeech, 'ADV')
+        lemma.updateDefinitions()
+        self.assertEqual(lemma.partOfSpeech, 'ADJ')
+        self.assertEqual(lemma.lemma, 'hesitant')
+        definitions = json.loads(lemma.definitions)
+        self.assertTrue(len(definitions) > 0)
 
         storer = LemmaStorer('Rickle Pick - Occurence One')
         lemmaCollector.storeLemmas(storer, maxOccurence=1)
