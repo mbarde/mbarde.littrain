@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from mbarde.littrain.wiktionary import adverbToAdjcetive
 from plone import api
 from plone.i18n.normalizer import idnormalizer
 from z3c.relationfield import RelationValue
@@ -108,6 +109,14 @@ class LemmaStorer:
         self.book = self.getBook(bookTitle)
 
     def storeLemma(self, lemma, updateDefinitions=False):
+        if lemma.partOfSpeech == 'ADV':
+            # convert adverb lemma to corresponding adjective,
+            # since adjectives usually have more detailed definitions
+            lemmaAdj = adverbToAdjcetive(lemma.lemma)
+            if lemmaAdj is not False:
+                lemma.lemma = lemmaAdj
+                lemma.partOfSpeech = 'ADJ'
+
         # convert list of chapter titles into list of
         # RelationValue's pointing to chapter objects
         intids = component.getUtility(IIntIds)

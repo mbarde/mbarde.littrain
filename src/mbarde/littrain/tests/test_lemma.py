@@ -88,8 +88,6 @@ class LemmaUnitTest(unittest.TestCase):
 
         # test adverb definitions
         lemma = chapter0.listFolderContents()[1]
-        self.assertEqual(lemma.lemma, 'hesitantly')
-        self.assertEqual(lemma.partOfSpeech, 'ADV')
         lemma.updateDefinitions()
         self.assertEqual(lemma.partOfSpeech, 'ADJ')
         self.assertEqual(lemma.lemma, 'hesitant')

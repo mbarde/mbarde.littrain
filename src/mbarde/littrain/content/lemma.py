@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from mbarde.littrain import _
-from mbarde.littrain.wiktionary import adverbToAdjcetive
 from mbarde.littrain.wiktionary import getDefinitions
 from mbarde.littrain.wiktionary import getPartOfSpeechWiktionaryStyle
 from plone.app.vocabularies.catalog import CatalogSource
@@ -68,16 +67,7 @@ class Lemma(Item):
         self.relatedWords = []
         self.examples = []
 
-        if self.partOfSpeech == 'ADV':
-            # convert adverb lemma to corresponding adjective,
-            # since adjectives usually have more detailed definitions
-            lemmaAdj = adverbToAdjcetive(self.lemma)
-            if lemmaAdj is not False:
-                self.lemma = lemmaAdj
-                self.partOfSpeech = 'ADJ'
-
         definitions = getDefinitions(self.lemma)
-
         if len(definitions) == 0:
             return
 
