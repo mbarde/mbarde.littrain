@@ -33,6 +33,19 @@ class LitTrainControlPanelForm(RegistryEditForm):
                       mapping={u'successCount': len(brains)}),
             request=self.request, type='info')
 
+    @button.buttonAndHandler(_(u'Show undefined lemmas'))
+    def handleFindUndefined(self, action):
+        undefinedLemmas = []
+        brains = api.content.find(portal_type='Lemma')
+        for brain in brains:
+            lemma = brain.getObject()
+            if len(lemma.definitions) == 0:
+                undefinedLemmas.append(lemma.title)
+
+        message = ', '.join(undefinedLemmas)
+        api.portal.show_message(
+            message=message, request=self.request, type='info')
+
     @button.buttonAndHandler(_(u'Update all lemmas'))
     def handleUpdateAll(self, action):
         brains = api.content.find(portal_type='Lemma')
