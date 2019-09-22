@@ -76,3 +76,15 @@ class LemmaIntegrationTest(unittest.TestCase):
             fti.global_allow,
             u'{0} is globally addable!'.format(fti.id),
         )
+
+    def test_lemma_wrong_part_of_speech(self):
+        lemma = api.content.create(
+            container=self.parent,
+            type='Lemma',
+            id='lemma',
+        )
+        lemma.partOfSpeech = 'ADV'
+        lemma.lemma = 'closer'
+        lemma.updateDefinitions()
+        self.assertTrue(len(lemma.definitions) > 0)
+        self.assertEqual(lemma.partOfSpeech, 'ADJ')

@@ -24,16 +24,23 @@ def getDefinitions(lemma):
 # https://spacy.io/api/annotation#pos-en
 # to
 # https://en.wiktionary.org/wiki/Wiktionary:Entry_layout#Part_of_speech
+PART_OF_SPEECH_MAPPINGS = {
+    'PROPN': 'noun',
+    'ADJ': 'adjective',
+    'NOUN': 'noun',
+    'VERB': 'verb',
+    'ADV': 'adverb',
+    'INTJ': 'interjection',
+}
+
+
 def getPartOfSpeechWiktionaryStyle(partOfSpeech):
-    mappings = {
-        'PROPN': 'noun',
-        'ADJ': 'adjective',
-        'NOUN': 'noun',
-        'VERB': 'verb',
-        'ADV': 'adverb',
-        'INTJ': 'interjection',
-    }
-    return mappings.get(partOfSpeech, partOfSpeech)
+    return PART_OF_SPEECH_MAPPINGS.get(partOfSpeech, partOfSpeech)
+
+
+def getPartOfSpeechSpacyStyle(partOfSpeech):
+    invertedMappings = dict((v, k) for k, v in PART_OF_SPEECH_MAPPINGS.items())
+    return invertedMappings.get(partOfSpeech, partOfSpeech)
 
 
 def adverbToAdjcetive(lemmaAdverb):

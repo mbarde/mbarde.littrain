@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from mbarde.littrain import _
 from mbarde.littrain.wiktionary import getDefinitions
+from mbarde.littrain.wiktionary import getPartOfSpeechSpacyStyle
 from mbarde.littrain.wiktionary import getPartOfSpeechWiktionaryStyle
 from plone.app.vocabularies.catalog import CatalogSource
 from plone.dexterity.content import Item
@@ -69,7 +70,19 @@ class Lemma(Item):
 
         definitions = getDefinitions(self.lemma)
         if len(definitions) == 0:
-            return
+            if not self.lemma[0].isupper():
+                return
+
+            # if lemma starts with uppercase character, try to get
+            # definitions for lemma as lowercase word
+            lemmaLower = self.lemma.lower()
+            definitions = getDefinitions(lemmaLower)
+            if len(definitions) == 0:
+                return
+
+            # definitions found, update lemma regarding
+            self.lemma = lemmaLower
+            self.title = lemmaLower
 
         # if Wiktionary does offer only one definition,
         # we use this without further checks
@@ -85,6 +98,13 @@ class Lemma(Item):
             if pos.lower() == posWik:
                 self.storeWiktionaryDefinition(definition)
                 return
+
+        # if no definition matches part of speech,
+        # simply take first one (better than nothing - approach)
+        firstDefinition = definitions[0]
+        self.storeWiktionaryDefinition(firstDefinition)
+        # ... and update lemma regarding
+        self.partOfSpeech = getPartOfSpeechSpacyStyle(firstDefinition['partOfSpeech'])
 
     def storeWiktionaryDefinition(self, wikDef):
         self.definitions = json.dumps(wikDef['text'][1:])
