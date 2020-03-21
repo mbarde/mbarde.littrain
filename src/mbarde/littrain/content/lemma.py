@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from mbarde.littrain import _
+from mbarde.littrain.utils import addToUsersLearnedLemmas
+from mbarde.littrain.utils import deleteFromUsersLearnedLemmas
+from mbarde.littrain.utils import isLemmaLearnedByUser
 from mbarde.littrain.wiktionary import getDefinitions
 from mbarde.littrain.wiktionary import getPartOfSpeechSpacyStyle
 from mbarde.littrain.wiktionary import getPartOfSpeechWiktionaryStyle
@@ -110,3 +113,12 @@ class Lemma(Item):
         self.definitions = json.dumps(wikDef['text'][1:])
         self.relatedWords = json.dumps(wikDef['relatedWords'])
         self.examples = json.dumps(wikDef['examples'])
+
+    def setAsLearnedForCurrentUser(self):
+        addToUsersLearnedLemmas(lemma=self)
+
+    def setAsNotLearnedForCurrentUser(self):
+        deleteFromUsersLearnedLemmas(lemma=self)
+
+    def isLearnedByCurrentUser(self):
+        return isLemmaLearnedByUser(lemma=self)

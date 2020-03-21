@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from mbarde.littrain.content.lemma import ILemma  # NOQA E501
 from mbarde.littrain.testing import MBARDE_LITTRAIN_INTEGRATION_TESTING  # noqa
+from mbarde.littrain.utils import getUsersLearnedLemmas
 from plone import api
+from plone.app.testing import login
+from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import createObject
 from zope.component import queryUtility
@@ -27,6 +31,12 @@ class LemmaIntegrationTest(unittest.TestCase):
             title='Parent container',
         )
         self.parent = self.portal[parent_id]
+
+        self.SECOND_TEST_USER_NAME = 'second-test-user'
+        api.user.create(
+            email=self.SECOND_TEST_USER_NAME + '@test.org',
+            username=self.SECOND_TEST_USER_NAME,
+        )
 
     def test_ct_lemma_schema(self):
         fti = queryUtility(IDexterityFTI, name='Lemma')
@@ -88,3 +98,30 @@ class LemmaIntegrationTest(unittest.TestCase):
         lemma.updateDefinitions()
         self.assertTrue(len(lemma.definitions) > 0)
         self.assertEqual(lemma.partOfSpeech, 'ADJ')
+
+    def test_lemma_set_state_for_user(self):
+        learnedLemmas = getUsersLearnedLemmas()
+        self.assertEqual(len(learnedLemmas), 0)
+
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
+        lemma = api.content.create(
+            container=self.parent,
+            type='Lemma',
+            id='lemma',
+        )
+
+        self.assertFalse(lemma.isLearnedByCurrentUser())
+        lemma.setAsLearnedForCurrentUser()
+        self.assertTrue(lemma.isLearnedByCurrentUser())
+        logout()
+
+        login(self.portal, self.SECOND_TEST_USER_NAME)
+        self.assertFalse(lemma.isLearnedByCurrentUser())
+        lemma.setAsLearnedForCurrentUser()
+        self.assertTrue(lemma.isLearnedByCurrentUser())
+        logout()
+
+        login(self.portal, TEST_USER_NAME)
+        self.assertTrue(lemma.isLearnedByCurrentUser())
+        lemma.setAsNotLearnedForCurrentUser()
+        self.assertFalse(lemma.isLearnedByCurrentUser())
