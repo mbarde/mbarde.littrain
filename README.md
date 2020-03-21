@@ -36,7 +36,7 @@ Set up API
 
 Install `plone.retapi`
 
-To fix CORS add following to buildout configuration (see https://github.com/plone/volto/blob/master/api/base.cfg#L24):
+To fix CORS add following to buildout configuration in `client` or `client_base` (see https://github.com/plone/volto/blob/master/api/base.cfg#L24):
 
 ```
 zcml-additional =
